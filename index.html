@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17324d">
+<meta name="description" content="English Grammar Master — bilingual, offline, interactive grammar learning PWA.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<title>English Grammar Master</title>
+<style>
+:root{--ink:#17324d;--accent:#075f9d;--bg:#f4f7fb;--card:#fff;--muted:#687786;--ok:#18794e;--bad:#b42318;--line:#dce4ec}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#1d2935}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{background:linear-gradient(135deg,#17324d,#075f9d);color:#fff;padding:22px 16px 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 18px #0002}
+.header-inner{max-width:1100px;margin:auto}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:13px;background:#fff2;display:grid;place-items:center;font-size:26px}
+h1{font-size:clamp(22px,5vw,34px);margin:0}.tagline{opacity:.9;margin:3px 0 0;font-size:13px}
+nav{display:flex;gap:8px;overflow:auto;padding:10px 0 2px;scrollbar-width:none}nav button{white-space:nowrap;border:1px solid #fff4;background:#fff1;color:#fff;border-radius:999px;padding:9px 13px}nav button.active{background:#fff;color:var(--ink)}
+main{max-width:1100px;margin:auto;padding:18px 14px 90px}.view{display:none}.view.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 4px 18px #17324d0a}.card h2,.card h3{margin-top:0;color:var(--ink)}
+.hero{padding:20px;border-radius:18px;background:linear-gradient(135deg,#fff,#eaf4fb);border:1px solid #cfe1ef;margin-bottom:14px}.hero p{max-width:760px;line-height:1.65}
+.btn{border:0;border-radius:10px;background:var(--accent);color:#fff;padding:10px 14px;font-weight:650}.btn.secondary{background:#e8eef4;color:var(--ink)}.btn.success{background:var(--ok)}.btn.danger{background:var(--bad)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.search{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.module{display:flex;flex-direction:column;gap:8px}.module .meta{font-size:12px;color:var(--muted)}.pill{display:inline-block;border-radius:999px;background:#edf4fa;padding:5px 9px;font-size:12px;margin:2px}
+.lesson p,.rule{line-height:1.7}.bengali{font-family:"Noto Sans Bengali","Nirmala UI",sans-serif;background:#f8fbfd;border-left:4px solid #7aaed0;padding:10px 12px;border-radius:8px}
+.example{padding:12px;border:1px dashed #b8c9d8;border-radius:10px;background:#fbfdff;margin:8px 0}.example b{color:var(--accent)}
+.option{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px;margin:8px 0}.option.correct{border-color:#5bb88a;background:#effaf4}.option.wrong{border-color:#e98d84;background:#fff1f0}
+.progress{height:9px;background:#e3e9ef;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:var(--accent);width:0}
+.small{font-size:13px;color:var(--muted)}.notice{padding:12px 14px;background:#fff8df;border:1px solid #eedb8b;border-radius:11px}
+footer{text-align:center;padding:25px;color:var(--muted)}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;gap:8px;padding:8px;z-index:25}
+.bottom button{flex:1;max-width:180px;border:0;background:#fff;padding:8px;color:var(--ink)}.bottom button strong{display:block}
+@media(min-width:760px){.bottom{display:none}main{padding-top:24px}.hero{padding:28px}}
+@media print{header,.bottom,.no-print{display:none!important}body{background:#fff}.card{box-shadow:none;break-inside:avoid}main{padding:0}.view{display:block!important}}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+  <div class="brand"><div class="logo">📖</div><div><h1>English Grammar Master</h1><div class="tagline">Learn • Practise • Transform • Master</div></div></div>
+  <nav id="topnav"></nav>
+</div>
+</header>
+
+<main>
+<section id="home" class="view active">
+  <div class="hero">
+    <h2>Complete Grammar Learning Engine</h2>
+    <p>Mobile-first English grammar learning with English → বাংলা explanations, examples, practice, timed tests, progress tracking, mistake review, printing and offline support.</p>
+    <div class="controls">
+      <button class="btn" onclick="show('modules')">Start Learning</button>
+      <button class="btn secondary" onclick="startMixedTest()">100-Question Test</button>
+      <button class="btn secondary" onclick="window.print()">Print</button>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card"><h3>📚 Learn</h3><p>Study a topic rule-by-rule with examples and Bengali support.</p></div>
+    <div class="card"><h3>✍️ Practise</h3><p>One-question-at-a-time exercises with instant explanations.</p></div>
+    <div class="card"><h3>🧠 Test</h3><p>Timed topic tests and a 100-question mixed examination engine.</p></div>
+    <div class="card"><h3>📈 Progress</h3><p>Scores, accuracy, completed topics and a personal mistake book are stored locally.</p></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h3>Overall progress</h3><div class="progress"><i id="overallBar"></i></div><p id="overallText" class="small"></p></div>
+</section>
+
+<section id="modules" class="view">
+  <div class="card">
+    <h2>Grammar Modules</h2>
+    <input class="search" id="moduleSearch" placeholder="Search grammar topic..." oninput="renderModules()">
+  </div>
+  <div id="moduleGrid" class="grid" style="margin-top:12px"></div>
+</section>
+
+<section id="lesson" class="view">
+  <div id="lessonBox"></div>
+</section>
+
+<section id="practice" class="view">
+  <div class="card"><h2>Practice</h2><div id="practiceBox"></div></div>
+</section>
+
+<section id="test" class="view">
+  <div id="testBox"></div>
+</section>
+
+<section id="progress" class="view">
+  <div class="grid">
+    <div class="card"><h2>Progress</h2><p id="progressStats"></p><div class="progress"><i id="progressBar"></i></div></div>
+    <div class="card"><h2>Mistake Book</h2><div id="mistakes"></div></div>
+  </div>
+</section>
+</main>
+
+<div class="bottom no-print">
+<button onclick="show('home')">🏠<strong>Home</strong></button>
+<button onclick="show('modules')">📚<strong>Learn</strong></button>
+<button onclick="show('practice')">✍️<strong>Practice</strong></button>
+<button onclick="show('progress')">📈<strong>Progress</strong></button>
+</div>
+
+<footer>English Grammar Master • Offline-first learning engine</footer>
+
+<script>
+const MODULES=[
+{id:"parts",title:"Parts of Speech",b:"পদ-পরিচয়",desc:"Noun, Pronoun, Adjective, Verb, Adverb, Preposition, Conjunction and Interjection.",rules:[
+["Definition","Words are classified according to their work in a sentence.","বাক্যে শব্দের কাজ অনুযায়ী তাদের বিভিন্ন পদে শ্রেণিবদ্ধ করা হয়।"],
+["Noun","A noun names a person, place, thing or idea.","Noun ব্যক্তি, স্থান, বস্তু বা ভাবের নাম বোঝায়।"],
+["Pronoun","A pronoun is used in place of a noun.","Pronoun noun-এর পরিবর্তে ব্যবহৃত হয়।"],
+["Adjective","An adjective qualifies a noun or pronoun.","Adjective noun বা pronoun-এর গুণ, অবস্থা বা সংখ্যা বোঝায়।"],
+["Verb","A verb expresses an action, occurrence or state.","Verb কাজ, ঘটনা বা অবস্থা প্রকাশ করে।"],
+["Adverb","An adverb generally qualifies a verb, adjective or another adverb.","Adverb সাধারণত verb, adjective বা অন্য adverb-কে qualify করে।"],
+["Preposition","A preposition shows a relationship between words, often of place, time or direction.","Preposition শব্দের মধ্যে স্থান, সময়, দিক ইত্যাদির সম্পর্ক দেখায়।"],
+["Conjunction","A conjunction joins words, phrases or clauses.","Conjunction শব্দ, phrase বা clause যুক্ত করে।"],
+["Interjection","An interjection expresses a sudden feeling or emotion.","Interjection আকস্মিক অনুভূতি বা আবেগ প্রকাশ করে।"]]},
+{id:"articles",title:"Determiners & Articles",b:"Determiners ও Articles",desc:"Articles and determiner usage.",rules:[
+["Articles","The principal articles are a, an and the.","প্রধান article হল a, an এবং the।"],
+["A / An","Use the indefinite article with a singular countable noun when it is not definite; the choice depends on sound.","অনির্দিষ্ট singular countable noun-এর আগে sound অনুযায়ী a বা an ব্যবহৃত হয়।"],
+["The","The is the definite article and is used when the noun is definite or already identified.","নির্দিষ্ট বা পরিচিত noun-এর আগে the ব্যবহৃত হয়।"]]},
+{id:"tenses",title:"Tenses",b:"কাল",desc:"Present, Past and Future forms, usage and mixed practice.",rules:[
+["Present","Present forms describe present time, habitual action or other present meanings depending on the construction.","Present form বর্তমান সময়, অভ্যাসগত কাজ ইত্যাদি বোঝাতে ব্যবহৃত হয়।"],
+["Past","Past forms describe actions or states related to past time.","Past form অতীত সময়ের কাজ বা অবস্থা বোঝায়।"],
+["Future","Future constructions express actions or states related to future time.","Future construction ভবিষ্যৎ সময়ের কাজ বা অবস্থা বোঝায়।"],
+["Sequence","Tense choice depends on time reference and the construction of the sentence.","Tense নির্বাচন বাক্যের সময়-সম্পর্ক ও গঠন অনুযায়ী হয়।"]]},
+{id:"verbals",title:"Verbals / Non-finite Verbs",b:"Non-finite Verb",desc:"Infinitives, gerunds and participles.",rules:[
+["Three kinds","Verbals include infinitives, gerunds and participles.","Verbals-এর তিনটি প্রধান ধরন: infinitive, gerund ও participle।"],
+["Infinitive","An infinitive is commonly formed with to + base verb, though the bare infinitive also occurs in specified constructions.","সাধারণত to + base verb দিয়ে infinitive গঠিত হয়; নির্দিষ্ট ক্ষেত্রে bare infinitive-ও ব্যবহৃত হয়।"],
+["Gerund","A gerund is an -ing form functioning as a noun.","Gerund হল -ing form যা noun-এর কাজ করে।"],
+["Participle","Participles are verb forms used in participial constructions and can function adjectivally.","Participle verb-form যা participial construction-এ ব্যবহৃত হয় এবং adjective-এর মতো কাজ করতে পারে।"]]},
+{id:"adverbs",title:"Adverbs",b:"ক্রিয়া বিশেষণ",desc:"Adverbs qualifying verbs, adjectives, adverbs and wider units.",rules:[
+["Definition","An adverb generally qualifies a verb, an adjective or another adverb; it may also qualify a sentence or other part of speech except a noun and pronoun in the traditional formulation.","Adverb সাধারণত verb, adjective বা অন্য adverb-কে qualify করে; sentence বা অন্যান্য unit-ও qualify করতে পারে।"],
+["Verb","He walks slowly.","সে ধীরে হাঁটে।"],
+["Adjective","This is a very beautiful picture.","এটি একটি খুব সুন্দর ছবি।"],
+["Adverb","This can be done more easily.","এটি আরও সহজে করা যায়।"]]},
+{id:"interjections",title:"Interjections",b:"আবেগসূচক শব্দ",desc:"Interjections and the feelings they express.",rules:[
+["Definition","An interjection is traditionally treated as outside the construction of the sentence and expresses a sudden feeling.","Interjection সাধারণত বাক্যের গঠনগত অংশ নয়; এটি আকস্মিক অনুভূতি প্রকাশ করে।"],
+["Examples","Ah!, alas!, hurrah!, fie!, tut!, pish!, hush!, bravo! are examples used for different feelings or purposes.","Ah!, alas!, hurrah!, fie!, tut!, pish!, hush!, bravo! বিভিন্ন অনুভূতি বা উদ্দেশ্যে ব্যবহৃত হয়।"]]},
+{id:"voice",title:"Voice",b:"বাচ্য",desc:"Active and Passive Voice.",rules:[
+["Active","In the active voice, the subject is presented as the doer of the action.","Active voice-এ subject-কে কাজের কর্তা হিসেবে দেখানো হয়।"],
+["Passive","In the passive voice, the subject is presented as receiving the action.","Passive voice-এ subject কাজের প্রাপক হিসেবে উপস্থাপিত হয়।"],
+["Core pattern","A passive construction commonly uses a form of be + past participle, with tense determining the form of be.","Passive construction-এ সাধারণত be-এর উপযুক্ত form + past participle ব্যবহৃত হয়।"]]},
+{id:"clauses",title:"Clauses",b:"Clause",desc:"Noun, adjective and adverbial clause concepts.",rules:[
+["Noun clause","A noun clause performs a noun-like function in a larger sentence.","Noun clause বৃহত্তর বাক্যে noun-এর মতো কাজ করে।"],
+["Adjective clause","An adjective clause modifies a noun or pronoun.","Adjective clause noun বা pronoun-কে modify করে।"],
+["Adverb clause","An adverb clause performs an adverbial function, such as expressing time, reason, condition or purpose.","Adverb clause সময়, কারণ, শর্ত, উদ্দেশ্য ইত্যাদি adverbial অর্থ প্রকাশ করে।"]]},
+{id:"transformation",title:"Sentence Transformation",b:"বাক্য রূপান্তর",desc:"Transformation, joining, splitting and related grammar practice.",rules:[
+["Meaning first","A transformation should preserve the intended meaning while changing the grammatical form.","রূপান্তরের সময় grammatical form বদলালেও মূল অর্থ বজায় রাখতে হবে।"],
+["Accuracy","Check tense, subject-verb agreement, connectors, pronouns and punctuation after transformation.","রূপান্তরের পরে tense, subject-verb agreement, connector, pronoun ও punctuation পরীক্ষা করতে হবে."]]}
+];
+
+const QUESTIONS=[
+["parts","Which word is a noun?","teacher",["teacher","quickly","beautiful","under"] ,"A noun names a person, place, thing or idea."],
+["parts","Which word is an adverb?","slowly",["slowly","book","green","under"],"An adverb can qualify a verb, adjective or another adverb."],
+["articles","Choose the correct form: He is ___ honest man.","an",["a","an","the","no article"],"‘Honest’ begins with a vowel sound."],
+["articles","Which is the definite article?","the",["a","an","the","some"],"The is the definite article."],
+["tenses","Which form is used in ‘He opened the door’?","past",["present","past","future","infinitive"],"Opened is a past-tense form."],
+["verbals","Which is a gerund?","Swimming is useful.",["Swimming is useful.","He swims.","He will swim.","Swim quickly."],"Swimming functions as a noun in the sentence."],
+["adverbs","In ‘She sings beautifully’, which word is the adverb?","beautifully",["She","sings","beautifully","none"],"Beautifully qualifies the verb sings."],
+["interjections","Which word is an interjection expressing joy?","hurrah",["hurrah","because","under","quickly"],"Hurrah is traditionally used to express joy or approval."],
+["voice","In passive voice, the grammatical subject is generally presented as what?","receiver of the action",["doer only","receiver of the action","adverb","connector"],"The passive focuses on the receiver/affected participant."],
+["clauses","Which clause works like a noun?","noun clause",["noun clause","adjective clause","adverb clause","preposition"],"A noun clause has a noun-like function."]
+];
+
+let state=JSON.parse(localStorage.getItem("egm-state")||'{"done":{},"mistakes":[],"tests":0,"correct":0,"answered":0}');
+let currentModule=null,currentQuestions=[],qIndex=0,testScore=0,testTimer=null;
+
+function save(){localStorage.setItem("egm-state",JSON.stringify(state));updateProgress()}
+function show(id){
+ document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id)?.classList.add("active");
+ document.querySelectorAll("#topnav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+ window.scrollTo({top:0,behavior:"smooth"});
+ if(id==="modules")renderModules(); if(id==="progress")renderProgress(); updateProgress();
+}
+function initNav(){
+ const items=[["home","Home"],["modules","Modules"],["practice","Practice"],["test","Test"],["progress","Progress"]];
+ document.getElementById("topnav").innerHTML=items.map(([id,t])=>`<button data-view="${id}" onclick="show('${id}')">${t}</button>`).join("");
+}
+function renderModules(){
+ const q=(document.getElementById("moduleSearch")?.value||"").toLowerCase();
+ document.getElementById("moduleGrid").innerHTML=MODULES.filter(m=>(m.title+" "+m.b+" "+m.desc).toLowerCase().includes(q)).map(m=>`
+ <article class="card module"><h3>${m.title}</h3><div class="meta">${m.b}</div><p>${m.desc}</p><span>${m.rules.length} lesson points</span><button class="btn" onclick="openModule('${m.id}')">Learn</button></article>`).join("");
+}
+function openModule(id){
+ currentModule=MODULES.find(m=>m.id===id); if(!currentModule)return;
+ document.getElementById("lessonBox").innerHTML=`<div class="hero"><h2>${currentModule.title}</h2><p>${currentModule.desc}</p><span class="pill">${currentModule.b}</span></div>
+ <div class="card lesson"><h3>Rules & Explanations</h3>${currentModule.rules.map((r,i)=>`<div class="rule"><h3>${i+1}. ${r[0]}</h3><p><b>English:</b> ${r[1]}</p><p class="bengali"><b>বাংলা:</b> ${r[2]}</p></div>`).join("")}</div>
+ <div class="card no-print"><h3>Next step</h3><button class="btn" onclick="startPractice('${id}')">Practise this topic</button> <button class="btn secondary" onclick="startTopicTest('${id}')">Test this topic</button> <button class="btn secondary" onclick="window.print()">Print</button></div>`;
+ state.done[id]=true; save(); show("lesson");
+}
+function startPractice(topic=null){
+ currentQuestions=QUESTIONS.filter(q=>!topic||q[0]===topic); if(!currentQuestions.length) currentQuestions=QUESTIONS;
+ qIndex=0;testScore=0; renderQuestion(true); show("practice");
+}
+function renderQuestion(reset=false){
+ const q=currentQuestions[qIndex%currentQuestions.length];
+ document.getElementById("practiceBox").innerHTML=`<p class="small">Question ${(qIndex%currentQuestions.length)+1} of ${currentQuestions.length}</p><h3>${q[1]}</h3>${q[3].map(o=>`<button class="option" onclick="answerPractice(this,${JSON.stringify(o)},${JSON.stringify(q[2])},${JSON.stringify(q[4])})">${o}</button>`).join("")}`;
+}
+function answerPractice(btn,choice,answer,explain){
+ document.querySelectorAll("#practiceBox .option").forEach(b=>b.disabled=true);
+ if(choice===answer){btn.classList.add("correct");testScore++;state.correct++;}else{btn.classList.add("wrong");state.mistakes.unshift({q:currentQuestions[qIndex%currentQuestions.length][1],answer,choice});state.mistakes=state.mistakes.slice(0,50);}
+ state.answered++; save();
+ document.getElementById("practiceBox").insertAdjacentHTML("beforeend",`<div class="notice"><b>${choice===answer?"Correct!":"Review this:"}</b> ${explain}<br><button class="btn" style="margin-top:8px" onclick="nextPractice()">Next</button></div>`);
+}
+function nextPractice(){qIndex++; if(qIndex>=currentQuestions.length){document.getElementById("practiceBox").innerHTML=`<h3>Practice complete</h3><p>Score: ${testScore}/${currentQuestions.length}</p><button class="btn" onclick="startPractice()">Practise again</button>`}else renderQuestion()}
+function startTopicTest(topic){startTest(QUESTIONS.filter(q=>q[0]===topic),Math.min(QUESTIONS.filter(q=>q[0]===topic).length,10));}
+function startMixedTest(){let pool=[]; for(let i=0;i<10;i++) pool.push(...QUESTIONS); startTest(pool,100);}
+function startTest(pool,count){
+ currentQuestions=Array.from({length:count},(_,i)=>pool[i%pool.length]);qIndex=0;testScore=0;state.tests++;save(); renderTestQuestion(); show("test");
+}
+function renderTestQuestion(){
+ const q=currentQuestions[qIndex]; clearInterval(testTimer);
+ let secs=30; document.getElementById("testBox").innerHTML=`<div class="card"><p class="small">Question ${qIndex+1} of ${currentQuestions.length} • <span id="timer">${secs}</span>s</p><h2>${q[1]}</h2>${q[3].map(o=>`<button class="option" onclick="answerTest(this,${JSON.stringify(o)},${JSON.stringify(q[2])})">${o}</button>`).join("")}</div>`;
+ testTimer=setInterval(()=>{secs--;let t=document.getElementById("timer");if(t)t.textContent=secs;if(secs<=0){clearInterval(testTimer);answerTest(null,"__TIMEOUT__",q[2])}},1000);
+}
+function answerTest(btn,choice,answer){
+ clearInterval(testTimer); document.querySelectorAll("#testBox .option").forEach(b=>b.disabled=true);
+ if(choice===answer){testScore++;state.correct++;if(btn)btn.classList.add("correct")}else{if(btn)btn.classList.add("wrong");state.mistakes.unshift({q:currentQuestions[qIndex][1],answer,choice});state.mistakes=state.mistakes.slice(0,50)}
+ state.answered++;save();
+ setTimeout(()=>{qIndex++; if(qIndex>=currentQuestions.length) finishTest(); else renderTestQuestion()},250);
+}
+function finishTest(){document.getElementById("testBox").innerHTML=`<div class="hero"><h2>Test Complete</h2><p>Score: <b>${testScore}/${currentQuestions.length}</b> (${Math.round(testScore/currentQuestions.length*100)}%)</p><button class="btn" onclick="startMixedTest()">Take another test</button> <button class="btn secondary" onclick="show('progress')">View progress</button></div>`}
+function renderProgress(){
+ const total=MODULES.length,done=Object.keys(state.done).length,acc=state.answered?Math.round(state.correct/state.answered*100):0;
+ document.getElementById("progressStats").innerHTML=`Modules completed: <b>${done}/${total}</b><br>Questions answered: <b>${state.answered}</b><br>Accuracy: <b>${acc}%</b><br>Tests started: <b>${state.tests}</b>`;
+ document.getElementById("progressBar").style.width=(done/total*100)+"%";
+ document.getElementById("mistakes").innerHTML=state.mistakes.length?state.mistakes.slice(0,12).map(x=>`<div class="example"><b>${x.q}</b><br>Correct answer: ${x.answer}</div>`).join(""):"No mistakes recorded yet.";
+}
+function updateProgress(){
+ const done=Object.keys(state.done).length,p=Math.round(done/MODULES.length*100);
+ document.getElementById("overallBar").style.width=p+"%"; document.getElementById("overallText").textContent=`${done} of ${MODULES.length} modules completed • ${p}%`;
+}
+initNav();renderModules();updateProgress();
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
